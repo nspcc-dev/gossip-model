@@ -1,0 +1,49 @@
+# github.com/abiosoft/ishell v2.0.0+incompatible
+github.com/abiosoft/ishell
+# github.com/abiosoft/readline v0.0.0-20180607040430-155bce2042db
+github.com/abiosoft/readline
+# github.com/fatih/color v1.7.0
+github.com/fatih/color
+# github.com/flynn-archive/go-shlex v0.0.0-20150515145356-3f9db97f8568
+github.com/flynn-archive/go-shlex
+# github.com/mattn/go-colorable v0.0.9
+github.com/mattn/go-colorable
+# github.com/mattn/go-isatty v0.0.4
+github.com/mattn/go-isatty
+# github.com/onsi/gomega v1.4.3
+github.com/onsi/gomega
+github.com/onsi/gomega/internal/assertion
+github.com/onsi/gomega/internal/asyncassertion
+github.com/onsi/gomega/internal/testingtsupport
+github.com/onsi/gomega/matchers
+github.com/onsi/gomega/types
+github.com/onsi/gomega/internal/oraclematcher
+github.com/onsi/gomega/format
+github.com/onsi/gomega/matchers/support/goraph/bipartitegraph
+github.com/onsi/gomega/matchers/support/goraph/edge
+github.com/onsi/gomega/matchers/support/goraph/node
+github.com/onsi/gomega/matchers/support/goraph/util
+# golang.org/x/net v0.0.0-20180906233101-161cd47e91fd
+golang.org/x/net/html/charset
+golang.org/x/net/html
+golang.org/x/net/html/atom
+# golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e
+golang.org/x/sys/unix
+# golang.org/x/text v0.3.0
+golang.org/x/text/encoding
+golang.org/x/text/encoding/charmap
+golang.org/x/text/encoding/htmlindex
+golang.org/x/text/transform
+golang.org/x/text/encoding/internal/identifier
+golang.org/x/text/encoding/internal
+golang.org/x/text/encoding/japanese
+golang.org/x/text/encoding/korean
+golang.org/x/text/encoding/simplifiedchinese
+golang.org/x/text/encoding/traditionalchinese
+golang.org/x/text/encoding/unicode
+golang.org/x/text/language
+golang.org/x/text/internal/utf8internal
+golang.org/x/text/runes
+golang.org/x/text/internal/tag
+# gopkg.in/yaml.v2 v2.2.1
+gopkg.in/yaml.v2
