@@ -3,7 +3,7 @@ package model
 import (
 	"testing"
 
-	. "github.com/onsi/gomega"
+	"github.com/stretchr/testify/require"
 )
 
 func prepareNetwork(size int) (Network, error) {
@@ -20,30 +20,26 @@ func prepareNetwork(size int) (Network, error) {
 }
 
 func TestNetwork_RunEpochNaiveOnce(t *testing.T) {
-	g := NewGomegaWithT(t)
-
 	net, err := prepareNetwork(10)
-	g.Expect(err).NotTo(HaveOccurred())
+	require.NoError(t, err)
 	net.RunEpochNaiveOnce(2, 0)
-	g.Expect(net.CountCoverage()).To(Equal(3))
+	require.Equal(t, 3, net.CountCoverage())
 
 	net, err = prepareNetwork(10)
-	g.Expect(err).NotTo(HaveOccurred())
+	require.NoError(t, err)
 	net.RunEpochNaiveOnce(9, 0)
-	g.Expect(net.CountCoverage()).To(Equal(10))
+	require.Equal(t, 10, net.CountCoverage())
 }
 
 func TestNetwork_ChooseNodesCheck(t *testing.T) {
-	g := NewGomegaWithT(t)
-
 	net, err := prepareNetwork(10)
-	g.Expect(err).NotTo(HaveOccurred())
+	require.NoError(t, err)
 
-	g.Expect(net.ChooseNodesCheck(2, nil)).To(HaveLen(2))
-	g.Expect(net.ChooseNodesCheck(10, nil)).To(HaveLen(10))
-	g.Expect(net.ChooseNodesCheck(12, nil)).To(HaveLen(0))
+	require.Len(t, net.ChooseNodesCheck(2, nil), 2)
+	require.Len(t, net.ChooseNodesCheck(10, nil), 10)
+	require.Len(t, net.ChooseNodesCheck(12, nil), 0)
 
 	r1 := net.ChooseNodesCheck(2, map[int]bool{0: true, 1: true, 2: true, 3: true, 4: true, 6: true, 7: true, 9: true})
-	g.Expect(r1).To(ContainElement(5))
-	g.Expect(r1).To(ContainElement(8))
+	require.Contains(t, r1, 5)
+	require.Contains(t, r1, 8)
 }
