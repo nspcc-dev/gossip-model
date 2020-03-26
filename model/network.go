@@ -58,7 +58,7 @@ func SampleNetwork(size int) (Network, error) {
 		generated: make(map[int]map[int]bool, size),
 	}
 
-	for i := 0; i < size; i++ {
+	for i := 0; i < size; i++ { //почему не <=?
 		netmap.Topology[i] = 0 // to make map with needed len
 		netmap.generated[i] = make(map[int]bool)
 		netmap.generated[i][i] = true
