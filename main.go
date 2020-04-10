@@ -19,13 +19,13 @@ var (
 	R *rand.Rand
 )
 
-func jobWorker(job chan struct{}, c *model.EpochCounter, wg *sync.WaitGroup, s int, f int, iid int, d bool) {
+func jobWorker(job chan struct{}, c *model.EpochCounter, wg *sync.WaitGroup, s int, f int, iid int, d bool, p float64) {
 	defer func() {
 		wg.Done()
 	}()
 	for range job {
 		// Experimental routine starts here
-		netmap, err := model.SampleNetwork(s)
+		netmap, err := model.SampleNetwork(s, p)
 		if err != nil {
 			panic(err)
 		}
@@ -67,7 +67,7 @@ func jobWorker(job chan struct{}, c *model.EpochCounter, wg *sync.WaitGroup, s i
 	}
 }
 
-func runExperiment(size int, fanout int, numexp int, initid int, debug bool) {
+func runExperiment(size int, fanout int, numexp int, initid int, debug bool, probability float64) {
 	start := time.Now()
 	defer func() {
 		fmt.Println(time.Since(start))
@@ -92,7 +92,7 @@ func runExperiment(size int, fanout int, numexp int, initid int, debug bool) {
 	}
 
 	for j := 0; j < workerCount; j++ {
-		go jobWorker(jobs, &c, wg, size, fanout, initid, debug)
+		go jobWorker(jobs, &c, wg, size, fanout, initid, debug, probability)
 	}
 	close(jobs)
 	wg.Wait()
@@ -128,6 +128,7 @@ func main() {
 	fanoutSize := flag.Int("f", 10, "size of fanout value")
 	initialNode := flag.Int("n", 0, "index of leader node")
 	numExperiments := flag.Int("c", 10, "number of experiments")
+	probability := flag.Float64("p", 0.5, "probability of node connections")
 	debug := flag.Bool("debug", false, "debug mode")
 	repl := flag.Bool("i", false, "interactive mode")
 	flag.Parse()
@@ -165,12 +166,19 @@ func main() {
 					return
 				}
 
+				c.Print("Probability of node connections: ")
+				prob, err := strconv.ParseFloat(c.ReadLine(), 64)
+				if err != nil || prob < 0 || prob > 1 {
+					c.Println("Incorrect probability")
+					return
+				}
+
 				c.Println("-----------")
-				runExperiment(netsize, fanout, expnum, 0, false)
+				runExperiment(netsize, fanout, expnum, 0, false, prob)
 			},
 		})
 		shell.Run()
 	} else {
-		runExperiment(*sampleSize, *fanoutSize, *numExperiments, *initialNode, *debug)
+		runExperiment(*sampleSize, *fanoutSize, *numExperiments, *initialNode, *debug, *probability)
 	}
 }

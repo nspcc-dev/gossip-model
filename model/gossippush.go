@@ -17,7 +17,7 @@ func (n *Network) RunEpochNaiveOnce(fanout int, epoch int) Stat {
 
 	for ind, v := range n.Topology {
 		if v == 1 {
-			voted := n.ChooseNodesCheck(fanout, n.generated[ind])
+			voted := n.ChooseNodesCheck(fanout, n.generated[ind], ind)
 			n.SetHistoryEpoch(ind, epoch, voted)
 			s.Sent += len(voted)
 			for _, vote := range voted {
@@ -57,7 +57,7 @@ func (n *Network) RunEpochNaiveForever(fanout int, epoch int) Stat {
 
 	for ind, v := range n.Topology {
 		if v == 1 {
-			voted := n.ChooseNodesCheck(fanout, n.generated[ind])
+			voted := n.ChooseNodesCheck(fanout, n.generated[ind], ind)
 			n.SetHistoryEpoch(ind, epoch, voted)
 			s.Sent += len(voted)
 			for _, vote := range voted {
@@ -90,7 +90,7 @@ func (n *Network) RunEpochNaiveForeverMemorise(fanout int, epoch int) Stat {
 
 	for ind, v := range n.Topology {
 		if v == 1 {
-			voted := n.ChooseNodesCheck(fanout, n.generated[ind])
+			voted := n.ChooseNodesCheck(fanout, n.generated[ind], ind)
 			n.SetHistoryEpoch(ind, epoch, voted)
 			s.Sent += len(voted)
 			for _, vote := range voted {
@@ -121,7 +121,7 @@ func (n *Network) RunEpochCentralised(fanout int, epoch int) Stat {
 
 	newVotes := make(map[int]int, len(n.Topology))
 
-	voted := n.ChooseNodesCheck(fanout, n.generated[0])
+	voted := n.ChooseNodesCheck(fanout, n.generated[0], 0)
 	n.SetHistoryEpoch(0, epoch, voted)
 	s.Sent += len(voted)
 	for _, vote := range voted {
@@ -150,7 +150,7 @@ func (n *Network) RunEpochCentralisedMemorise(fanout int, epoch int) Stat {
 
 	newVotes := make(map[int]int, len(n.Topology))
 
-	voted := n.ChooseNodesCheck(fanout, n.generated[0])
+	voted := n.ChooseNodesCheck(fanout, n.generated[0], 0)
 	n.SetHistoryEpoch(0, epoch, voted)
 	s.Sent += len(voted)
 	for _, vote := range voted {
@@ -185,7 +185,7 @@ func (n *Network) RunEpochVectorOnce(fanout int, epoch int) Stat {
 
 	for ind, v := range n.Topology {
 		if v == 1 {
-			voted := n.ChooseNodesCheck(fanout, n.generated[ind])
+			voted := n.ChooseNodesCheck(fanout, n.generated[ind], ind)
 			n.SetHistoryEpoch(ind, epoch, voted)
 			s.Sent += len(voted)
 			for _, vote := range voted {

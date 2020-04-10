@@ -26,7 +26,7 @@ func (s CryptoSource) Seed(seed int64) {
 
 }
 
-func (n *Network) ChooseNodesCheck(fanout int, exclude map[int]bool) []int {
+func (n *Network) ChooseNodesCheck(fanout int, exclude map[int]bool, own_node int) []int {
 	if fanout > len(n.Topology) {
 		return []int{}
 	}
@@ -35,7 +35,7 @@ func (n *Network) ChooseNodesCheck(fanout int, exclude map[int]bool) []int {
 		// if re-random is way too long
 		candidates := r.Perm(len(n.Topology))
 		for i := 0; len(nodes) < fanout && i < len(n.Topology); i++ {
-			if !exclude[candidates[i]] {
+			if !exclude[candidates[i]] && n.IsLinkExist(own_node, candidates[i]) {
 				nodes = append(nodes, candidates[i])
 			}
 		}
@@ -44,7 +44,7 @@ func (n *Network) ChooseNodesCheck(fanout int, exclude map[int]bool) []int {
 		alreadySelected := make(map[int]bool, fanout)
 		for len(nodes) < fanout {
 			candidate := r.Intn(len(n.Topology))
-			if !exclude[candidate] && !alreadySelected[candidate] {
+			if !exclude[candidate] && !alreadySelected[candidate] && n.IsLinkExist(own_node, candidate) {
 				nodes = append(nodes, candidate)
 				alreadySelected[candidate] = true
 			}

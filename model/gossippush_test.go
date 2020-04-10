@@ -8,7 +8,7 @@ import (
 
 func prepareNetwork(size int) (Network, error) {
 	var err error
-	net, err := SampleNetwork(size)
+	net, err := SampleNetwork(size, 1)
 	if err != nil {
 		return net, err
 	}
