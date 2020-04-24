@@ -1,11 +1,11 @@
 .PHONY: build up repl
 
-build:
+build-docker:
 	@docker build . -t gossip-model-image
 
-up: build
+up: build-docker
 	@docker run -it --rm gossip-model-image:latest
 
-repl: build
+repl: build-docker
 	@docker run -it --rm gossip-model-image:latest gossipmodel -i
 
