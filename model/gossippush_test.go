@@ -35,11 +35,11 @@ func TestNetwork_ChooseNodesCheck(t *testing.T) {
 	net, err := prepareNetwork(10)
 	require.NoError(t, err)
 
-	require.Len(t, net.ChooseNodesCheck(2, nil), 2)
-	require.Len(t, net.ChooseNodesCheck(10, nil), 10)
-	require.Len(t, net.ChooseNodesCheck(12, nil), 0)
+	require.Len(t, net.ChooseNodesCheck(2, nil,0), 2)
+	require.Len(t, net.ChooseNodesCheck(10, nil,0), 10)
+	require.Len(t, net.ChooseNodesCheck(12, nil,0), 0)
 
-	r1 := net.ChooseNodesCheck(2, map[int]bool{0: true, 1: true, 2: true, 3: true, 4: true, 6: true, 7: true, 9: true})
+	r1 := net.ChooseNodesCheck(2, map[int]bool{0: true, 1: true, 2: true, 3: true, 4: true, 6: true, 7: true, 9: true},0)
 	require.Contains(t, r1, 5)
 	require.Contains(t, r1, 8)
 }
