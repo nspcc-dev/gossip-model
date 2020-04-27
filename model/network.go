@@ -7,7 +7,7 @@ import (
 type (
 	Network struct {
 		Topology   map[int]int           // defines map of available nodes
-		LinkMatrix map[int]map[int]bool  // Matrix of connectivity
+		LinkMatrix map[int]map[int]bool  // Connectivity Matrix
 		History    map[int]map[int][]int // history of all propagation changes
 		generated  map[int]map[int]bool  // extra structure for history based algorithms.
 	}
