@@ -16,22 +16,22 @@ func (n *Network) RunEpochNaiveOnce(fanout int, epoch int) Stat {
 	newVotes := make(map[int]int, len(n.Topology))
 
 	for ind, v := range n.Topology {
-		if v == 1 {
+		if v.data == 1 {
 			voted := n.ChooseNodesCheck(fanout, n.generated[ind], ind)
 			n.SetHistoryEpoch(ind, epoch, voted)
 			s.Sent += len(voted)
 			for _, vote := range voted {
 				newVotes[vote]++
 			}
-			n.Topology[ind] = -1
+			n.Topology[ind].data = -1
 		}
 	}
 
 	for node, repeated := range newVotes {
-		if n.Topology[node] != 0 {
+		if n.Topology[node].data != 0 {
 			s.Reused++
 		} else {
-			n.Topology[node] = 1
+			n.Topology[node].data = 1
 		}
 		if repeated > 1 {
 			s.Reused += repeated - 1
@@ -56,7 +56,7 @@ func (n *Network) RunEpochNaiveForever(fanout int, epoch int) Stat {
 	newVotes := make(map[int]int, len(n.Topology))
 
 	for ind, v := range n.Topology {
-		if v == 1 {
+		if v.data == 1 {
 			voted := n.ChooseNodesCheck(fanout, n.generated[ind], ind)
 			n.SetHistoryEpoch(ind, epoch, voted)
 			s.Sent += len(voted)
@@ -66,10 +66,10 @@ func (n *Network) RunEpochNaiveForever(fanout int, epoch int) Stat {
 		}
 	}
 	for node, repeated := range newVotes {
-		if n.Topology[node] == 1 {
+		if n.Topology[node].data == 1 {
 			s.Reused++
 		}
-		n.Topology[node] = 1
+		n.Topology[node].data = 1
 		if repeated > 1 {
 			s.Reused += repeated - 1
 		}
@@ -89,7 +89,7 @@ func (n *Network) RunEpochNaiveForeverMemorise(fanout int, epoch int) Stat {
 	newVotes := make(map[int]int, len(n.Topology))
 
 	for ind, v := range n.Topology {
-		if v == 1 {
+		if v.data == 1 {
 			voted := n.ChooseNodesCheck(fanout, n.generated[ind], ind)
 			n.SetHistoryEpoch(ind, epoch, voted)
 			s.Sent += len(voted)
@@ -100,10 +100,10 @@ func (n *Network) RunEpochNaiveForeverMemorise(fanout int, epoch int) Stat {
 		}
 	}
 	for node, repeated := range newVotes {
-		if n.Topology[node] == 1 {
+		if n.Topology[node].data == 1 {
 			s.Reused++
 		}
-		n.Topology[node] = 1
+		n.Topology[node].data = 1
 		if repeated > 1 {
 			s.Reused += repeated - 1
 		}
@@ -129,10 +129,10 @@ func (n *Network) RunEpochCentralised(fanout int, epoch int) Stat {
 	}
 
 	for node, repeated := range newVotes {
-		if n.Topology[node] == 1 {
+		if n.Topology[node].data == 1 {
 			s.Reused++
 		}
-		n.Topology[node] = 1
+		n.Topology[node].data = 1
 		if repeated > 1 {
 			s.Reused += repeated - 1
 		}
@@ -158,10 +158,10 @@ func (n *Network) RunEpochCentralisedMemorise(fanout int, epoch int) Stat {
 	}
 
 	for node, repeated := range newVotes {
-		if n.Topology[node] == 1 {
+		if n.Topology[node].data == 1 {
 			s.Reused++
 		}
-		n.Topology[node] = 1
+		n.Topology[node].data = 1
 		n.generated[0][node] = true
 		if repeated > 1 {
 			s.Reused += repeated - 1
@@ -184,7 +184,7 @@ func (n *Network) RunEpochVectorOnce(fanout int, epoch int) Stat {
 	voters := make(map[int][]int, len(n.Topology))
 
 	for ind, v := range n.Topology {
-		if v == 1 {
+		if v.data == 1 {
 			voted := n.ChooseNodesCheck(fanout, n.generated[ind], ind)
 			n.SetHistoryEpoch(ind, epoch, voted)
 			s.Sent += len(voted)
@@ -196,19 +196,19 @@ func (n *Network) RunEpochVectorOnce(fanout int, epoch int) Stat {
 				}
 				voters[vote] = append(voters[vote], ind)
 			}
-			n.Topology[ind] = -1
+			n.Topology[ind].data = -1
 		}
 	}
 
 	for node, repeated := range newVotes {
-		if n.Topology[node] != 0 {
+		if n.Topology[node].data != 0 {
 			s.Reused++
 		} else {
 			voter := voters[node][0]
 			for k := range n.generated[voter] {
 				n.generated[node][k] = true
 			}
-			n.Topology[node] = 1
+			n.Topology[node].data = 1
 		}
 		if repeated > 1 {
 			s.Reused += repeated - 1
