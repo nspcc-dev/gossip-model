@@ -27,6 +27,7 @@ type TestInfo struct {
 	debug        bool
 	clusters     model.ClusterList
 	default_prob float64
+	scenario     int
 }
 
 func (info *TestInfo) String() string {
@@ -37,6 +38,8 @@ func (info *TestInfo) String() string {
 	str += fmt.Sprintf("LeaderNode:           %d\n", info.leader_node)
 	str += fmt.Sprintf("Debug:                %t\n", info.debug)
 	str += fmt.Sprintf("Default probability:  %f\n", info.default_prob)
+	str += fmt.Sprintf("Scenario id:          %d\n", info.scenario)
+
 	if len(info.clusters) > 0 {
 		for id, v := range info.clusters {
 			str += fmt.Sprintf("Cluster-%d:            %f   capacity=%d\n", id+1, v.Prob, v.Capacity)
@@ -86,7 +89,26 @@ func jobWorker(job chan struct{}, c *model.EpochCounter, wg *sync.WaitGroup, tes
 				break
 			}
 			// Here we calling gossip algorithm
-			stat := netmap.RunEpochNaiveOnce(testInfo.fanout, i)
+			var stat model.Stat
+			switch testInfo.scenario {
+			case 0:
+				stat = netmap.RunEpochNaiveOnce(testInfo.fanout, i)
+			case 1:
+				stat = netmap.RunEpochNaiveForever(testInfo.fanout, i)
+			case 2:
+				stat = netmap.RunEpochNaiveForeverMemorise(testInfo.fanout, i)
+			case 3:
+				stat = netmap.RunEpochCentralised(testInfo.fanout, i)
+			case 4:
+				stat = netmap.RunEpochCentralisedMemorise(testInfo.fanout, i)
+			case 5:
+				stat = netmap.RunEpochVectorOnce(testInfo.fanout, i)
+			default:
+				fmt.Println("Unsupported scenario!")
+				os.Exit(1)
+				//0-NaiveOnce, 1-NaiveForever, 2-NaiveForeverMemorise, 3-Centralised, 4-CentralisedMemorise, 5-VectorOnce
+			}
+
 			reused += stat.Reused
 		}
 		if netmap.IsNetworkFilled() {
@@ -122,7 +144,6 @@ func runExperiment(testInfo TestInfo) {
 	for j := 0; j < testInfo.numexp; j++ {
 		jobs <- struct{}{}
 	}
-
 	for j := 0; j < workerCount; j++ {
 		go jobWorker(jobs, &c, wg, testInfo)
 	}
@@ -156,17 +177,16 @@ func runExperiment(testInfo TestInfo) {
 }
 
 func main() {
+	var testInfo TestInfo
 	repl := flag.Bool("i", false, "interactive mode")
-	testInfo := TestInfo{
-		size:         *flag.Int("s", 100, "size of network map"),
-		fanout:       *flag.Int("f", 10, "size of fanout value"),
-		leader_node:  *flag.Int("n", 0, "index of leader node"),
-		numexp:       *flag.Int("c", 10, "number of experiments"),
-		default_prob: *flag.Float64("p", 0.5, "default probability of node connections"),
-		debug:        *flag.Bool("debug", false, "debug mode"),
-	}
-
+	flag.IntVar(&testInfo.size, "s", 100, "size of network map")
+	flag.IntVar(&testInfo.fanout, "f", 10, "size of fanout value")
+	flag.IntVar(&testInfo.leader_node, "n", 0, "index of leader node")
+	flag.IntVar(&testInfo.numexp, "c", 10, "number of experiments")
+	flag.Float64Var(&testInfo.default_prob, "p", 0.5, "default probability of node connections")
+	flag.BoolVar(&testInfo.debug, "debug", false, "debug mode")
 	flag.Var(&testInfo.clusters, "k", "clusters data. e.g.: -k 0.5/100 -k 0.8/20 ...")
+	flag.IntVar(&testInfo.scenario, "e", 0, `Scenario ID (0-NaiveOnce, 1-NaiveForever, 2-NaiveForeverMemorise, 3-Centralised, 4-CentralisedMemorise, 5-VectorOnce`)
 	flag.Parse()
 
 	if *repl {
